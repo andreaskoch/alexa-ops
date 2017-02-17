@@ -1,0 +1,9 @@
+Deployment deploy {ApplicationName}
+Deployment update {ApplicationName}
+Restart restart {ApplicationName}
+Restart reboot {ApplicationName}
+Status what's the status of {ApplicationName}
+CurrentVersion what's the current version of {ApplicationName}
+CurrentVersion which version of {ApplicationName} is currently deployed
+AvailableVersion what's the latest version of {ApplicationName}
+AvailableVersion what's the latest available version of {ApplicationName}
