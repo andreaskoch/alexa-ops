@@ -17,9 +17,9 @@ var (
 `, applicationName, applicationVersion))
 
 	// crawl
-	listenCommand = app.Command("listen", "Listen for incoming requests")
+	listenCommand = app.Command("listen", "Listen for requests from Alexa")
 	listenAddress = listenCommand.Flag("address", "The address/port to listen on").Default(":33011").Envar("ALEXAOPS_LISTEN_ADDRESS").Short('a').String()
-	listenConfig  = listenCommand.Flag("config", "The config file path").Default("alexaops.conf").Envar("ALEXAOPS_CONFIG").Short('c').String()
+	listenConfigPath  = listenCommand.Flag("config", "The config file path").Default("alexaops.conf").Envar("ALEXAOPS_CONFIG").Short('c').String()
 )
 
 func init() {
@@ -36,7 +36,13 @@ func handleCommandlineArgument(arguments []string) {
 	switch kingpin.MustParse(app.Parse(arguments)) {
 
 	case listenCommand.FullCommand():
-		server, serverError := NewServer()
+		config, configError := readConfigFromFile(*listenConfigPath)
+		if configError != nil {
+			fmt.Fprintf(os.Stderr, "%s", configError.Error())
+			os.Exit(1)
+		}
+
+		server, serverError := NewServer(*listenAddress, config)
 		if serverError != nil {
 			fmt.Fprintf(os.Stderr, "%s", serverError.Error())
 			os.Exit(1)
