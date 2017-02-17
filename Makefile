@@ -14,3 +14,7 @@ crosscompile:
 	GOOS=linux GOARCH=arm GOARM=7 go build -o bin/alexaops_linux_arm_7
 	GOOS=darwin GOARCH=amd64 go build -o bin/alexaops_darwin_amd64
 	GOOS=windows GOARCH=amd64 go build -o bin/alexaops_windows_amd64
+
+docker:
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/alexaops
+	docker build .
