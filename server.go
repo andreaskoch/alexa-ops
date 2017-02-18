@@ -58,7 +58,7 @@ func readServiceRequest(httpRequest *http.Request) (ServiceRequest, error) {
 
 func writeJSONResponse(w http.ResponseWriter, serviceResponse ServiceResponse) error {
 
-	jsonBody, err := json.Marshal(serviceResponse)
+	jsonBody, err := json.MarshalIndent(serviceResponse, "", "  ")
 	if err != nil {
 		return err
 	}
