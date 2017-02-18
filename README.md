@@ -1,6 +1,15 @@
 # 「 AlexaOPS 」
 The 24/7 endpoint for your "Amazon Echo" based DevOPS skills.
 
+AlexaOPS is your virtual 24/7 DevOPS team that performs the most common operations tasks for you:
+
+- Deployments
+- Version checks
+- Application Status Checking
+- Restarting applications
+
+## Usage
+
 **Deployment**
 
 > You: Alexa, ask OPS to deploy `<application name>`
