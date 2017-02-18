@@ -1,9 +1,7 @@
-Deployment deploye {ApplicationName}
-Deployment update {ApplicationName}
-Deployment aktualisiere {ApplicationName}
-Restart restart {ApplicationName}
-Restart starte {ApplicationName} neu
-Status wie ist der status von {ApplicationName}
+Deployment {ApplicationName} deployen
+Deployment {ApplicationName} aktualisieren
+Restart {ApplicationName} neu starten
+Status wie ist der Status von {ApplicationName}
 CurrentVersion was ist die aktuelle Version von {ApplicationName}
 CurrentVersion welche Version von {ApplicationName} ist gerade aktiv
 CurrentVersion welche Version von {ApplicationName} ist gerade deployt

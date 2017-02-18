@@ -4,7 +4,7 @@
   "testingInstructions": "",
   "countriesAndRegion": "all",
   "skillShortDescription": "A set of DevOPS skills for performing common operations tasks such as deployments, restarting a service and checking the status of a service",
-  "fullDescription": "AlexaOPS is your virtual 24/7 DevOPS team that performs the most common operations tasks for you: deployments, application version checks, application status checking, restarting applications"
+  "fullDescription": "AlexaOPS is your virtual 24/7 DevOPS team that performs the most common operations tasks for you: deployments, application version checks, application status checking, restarting applications.",
   "examplePhrases": [
     "Alexa, ask OPS to deploy Application A",
     "Alexa, ask OPS to restart Application A",
