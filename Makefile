@@ -1,11 +1,9 @@
 build:
 	go build -o bin/alexaops
 
-install:
-	go install
-
-test:
-	go test
+updateassets:
+	go get -u github.com/bouk/staticfiles
+	staticfiles -o files/files.go static/
 
 crosscompile:
 	GOOS=linux GOARCH=amd64 go build -o bin/alexaops_linux_amd64

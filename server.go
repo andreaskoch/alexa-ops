@@ -7,6 +7,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"github.com/gorilla/mux"
+	"github.com/andreaskoch/alexa-ops/files"
+	"io"
 )
 
 func NewServer(listenAddress string, config Config, intendHandlerProvider intendHandlerProvider) (Server, error) {
@@ -24,11 +27,33 @@ type Server struct {
 }
 
 func (server *Server) Run() error {
-	http.HandleFunc("/", server.handleRequest)
+	r := mux.NewRouter()
+
+	r.HandleFunc("/", server.intendHandler).Methods(http.MethodPost)
+
+	r.HandleFunc("/", server.websiteHandler).Methods(http.MethodGet)
+	r.HandleFunc("/index.html", server.websiteHandler).Methods(http.MethodGet)
+
+	http.Handle("/", r)
 	return http.ListenAndServe(server.listenAddress, nil)
 }
 
-func (server *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
+func (server *Server) websiteHandler(w http.ResponseWriter, r *http.Request) {
+	server.logRequest(r)
+
+	indexHtml, err  := files.Open("website/index.html")
+	defer indexHtml.Close()
+
+	if err != nil {
+		server.logError("Failed to decode request: %s", err.Error())
+		http.Error(w, "400 Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	io.Copy(w, indexHtml)
+}
+
+func (server *Server) intendHandler(w http.ResponseWriter, r *http.Request) {
 	server.logRequest(r)
 
 	serviceRequestModel, err := readServiceRequest(r)
