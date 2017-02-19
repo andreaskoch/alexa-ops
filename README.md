@@ -1,6 +1,8 @@
 # 「 AlexaOPS 」
 The 24/7 endpoint for your "Amazon Echo" based DevOPS skills.
 
+![AlexaOPS logo](files/logo/alexaops.png)
+
 AlexaOPS is your virtual 24/7 DevOPS team that performs the most common operations tasks for you:
 
 - Deployments
@@ -25,7 +27,7 @@ AlexaOPS is your virtual 24/7 DevOPS team that performs the most common operatio
 > Alexa: All KPIs are within normal parameters.
 > ◾ I can reach the health check page.
 > ◾ We received 15 orders in the last 30 minutes.
-> ◾ And no errors can be found in the logs. 
+> ◾ And no errors can be found in the logs.
 
 **Restart**
 
