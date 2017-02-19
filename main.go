@@ -10,6 +10,10 @@ import (
 const applicationName = "alexaops"
 const applicationVersion = "v0.1.0-alpha"
 
+const cultureEnglish = "en"
+const cultureGerman = "de"
+const defaultCulture = cultureEnglish
+
 var (
 	app = kingpin.New(applicationName, fmt.Sprintf(`「 %s 」%s is your 24/7 endpoint for your "Amazon Echo" based DevOPS skills.
 
@@ -42,7 +46,8 @@ func handleCommandlineArgument(arguments []string) {
 			os.Exit(1)
 		}
 
-		server, serverError := NewServer(*listenAddress, config)
+		intendHandlerProvider := newIntendHandlerProvider(config)
+		server, serverError := NewServer(*listenAddress, config, intendHandlerProvider)
 		if serverError != nil {
 			fmt.Fprintf(os.Stderr, "%s", serverError.Error())
 			os.Exit(1)

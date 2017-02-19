@@ -9,16 +9,18 @@ import (
 	"log"
 )
 
-func NewServer(listenAddress string, config Config) (Server, error) {
+func NewServer(listenAddress string, config Config, intendHandlerProvider intendHandlerProvider) (Server, error) {
 	return Server{
-		listenAddress: listenAddress,
-		config:        config,
+		listenAddress:         listenAddress,
+		config:                config,
+		intendHandlerProvider: intendHandlerProvider,
 	}, nil
 }
 
 type Server struct {
-	listenAddress string
-	config        Config
+	listenAddress         string
+	config                Config
+	intendHandlerProvider intendHandlerProvider
 }
 
 func (server *Server) Run() error {
@@ -42,9 +44,21 @@ func (server *Server) handleRequest(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response := createSpeechResponse(fmt.Sprintf("Deploying %s", serviceRequestModel.RequestBody.Intent.Slots.ApplicationName.Value))
+	intendHandler, intendHandlerErr := server.intendHandlerProvider.Get(serviceRequestModel.RequestBody.Intent.Name)
+	if intendHandlerErr != nil {
+		server.logError("No matching intend handler found: %s", intendHandlerErr.Error())
+		http.Error(w, "400 Bad Request", http.StatusBadRequest)
+		return
+	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8");
+	response, intendErr := intendHandler.Handle(serviceRequestModel)
+	if intendErr != nil {
+		server.logError("Failed to execute the %q intend handler: %s", intendHandler.Name(), intendErr.Error())
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	if err := writeJSONResponse(w, response); err != nil {
 		server.logError("Failed to write JSON response: %s", err.Error())
 		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
@@ -79,6 +93,10 @@ func requestMatchesApplicationID(request ServiceRequest, config Config) (bool, e
 // readServiceRequest reads reads the ServiceRequest model from the given http request.
 // Returns an error if the ServiceRequest could not be read.
 func readServiceRequest(httpRequest *http.Request) (ServiceRequest, error) {
+	if httpRequest.Method != http.MethodPost {
+		return ServiceRequest{}, fmt.Errorf("Invalid HTTP method: %s", httpRequest.Method)
+	}
+
 	var serviceRequest ServiceRequest
 	body, readBodyError := ioutil.ReadAll(httpRequest.Body)
 	if readBodyError != nil {
@@ -132,45 +150,4 @@ type ServiceRequest struct {
 		} `json:"intent"`
 	} `json:"request"`
 	Version string `json:"version"`
-}
-
-func createSpeechResponse(text string) ServiceResponse {
-	response := ServiceResponse{}
-	response.Version = "1.0"
-
-	response.ResponseBody.Card.Type = "Simple"
-	response.ResponseBody.Card.Title = "Deploy"
-	response.ResponseBody.Card.Content = text
-
-	response.ResponseBody.OutputSpeech.Type = "PlainText"
-	response.ResponseBody.OutputSpeech.Text = text
-	return response
-}
-
-type ServiceResponse struct {
-	Version string `json:"version"`
-	SessionAttributes struct {
-	} `json:"sessionAttributes,omitempty"`
-	ResponseBody struct {
-		OutputSpeech struct {
-			Type string `json:"type"`
-			Text string `json:"text"`
-		} `json:"outputSpeech,omitempty"`
-		Card struct {
-			Type    string `json:"type"`
-			Title   string `json:"title"`
-			Content string `json:"content"`
-		} `json:"card,omitempty"`
-		Reprompt         *Reprompt `json:"reprompt,omitempty"`
-		ShouldEndSession bool `json:"shouldEndSession"`
-	} `json:"response"`
-}
-
-type Reprompt struct {
-	OutputSpeech *OutputSpeech `json:"outputSpeech"`
-}
-
-type OutputSpeech struct {
-	Type string `json:"type"`
-	Text string `json:"text"`
 }
