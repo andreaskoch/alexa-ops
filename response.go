@@ -10,6 +10,8 @@ func createSpeechResponse(text string) ServiceResponse {
 
 	response.ResponseBody.OutputSpeech.Type = "PlainText"
 	response.ResponseBody.OutputSpeech.Text = text
+	response.ResponseBody.ShouldEndSession = true
+	
 	return response
 }
 
