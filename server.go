@@ -107,12 +107,12 @@ func (server *Server) logError(format string, p ...interface{}) {
 // in the supplied configuration. If the application IDs match true and no error is returned.
 // If the application IDs don't match false and an error is returned.
 func requestMatchesApplicationID(request ServiceRequest, config Config) (bool, error) {
-	isMatch := request.Session.Application.ApplicationID == config.AppID
+	isMatch := request.Session.Application.ApplicationID == config.Skill.AppID
 	if isMatch {
 		return true, nil
 	}
 
-	return false, fmt.Errorf("Given: %s, Required: %s", request.Session.Application.ApplicationID, config.AppID)
+	return false, fmt.Errorf("Given: %s, Required: %s", request.Session.Application.ApplicationID, config.Skill.AppID)
 }
 
 // readServiceRequest reads reads the ServiceRequest model from the given http request.

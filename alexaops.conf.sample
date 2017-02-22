@@ -1,0 +1,19 @@
+{
+  "skill": {
+    "appID": "Your-Alexa-Skill-ID"
+  },
+  "jenkinsAPI": {
+    "url": "http://jenkins.example.com:8080",
+    "username": "alexaops",
+    "apiToken": "8ebb23329c7a4575077462bd810030c16390dd7d"
+  },
+  "deployments": [
+    {
+      "type": "Jenkins",
+      "name": "wambo",
+      "jenkins": {
+        "jobName": "wambo-shop-deploy"
+      }
+    }
+  ]
+}

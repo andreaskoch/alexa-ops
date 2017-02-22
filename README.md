@@ -10,7 +10,9 @@ The 24/7 endpoint for your "Amazon Echo" based DevOPS skills.
 - Application Status Checking
 - Restarting applications
 
-## Usage
+## Using the AlexaOPS skill
+
+The keyword for triggering the skill is «**OPS**».
 
 **Deployment**
 
@@ -49,10 +51,52 @@ The 24/7 endpoint for your "Amazon Echo" based DevOPS skills.
 
 ## Installing AlexaOPS
 
-You can download pre-built binaries from the [released]()-section at GitHub or build it yourself if you have go installed:
+You can download pre-built binaries from the [releases](https://github.com/andreaskoch/alexa-ops/releases)-section at GitHub or build it yourself if you have go installed:
 
 ```bash
 go get github.com/andreaskoch/alexa-ops
+```
+
+## Running AlexaOPS
+
+You must specify the listen address (`--address=":33011"`) and configuration file (`--config="alexaops.conf"`) in order to start AlexaOPS:
+
+```bash
+alexaops listen --address=":33011" --config="alexaops.conf"
+```
+
+**Note**: AlexaOPS currenty does not do TLS. If you want to run your own AlexaOPS skill server you will have to put a reverse proxy in front of it that does the SSL termination.
+
+**Config file**
+
+You can dump a sample config to your current directory using the `dump-sample-config` action:
+
+```bash
+alexaops dump-sample-config
+```
+
+A structure of the config file looks like this (see: [alexaops.conf.sample](alexaops.conf.sample)):
+
+```json
+{
+  "skill": {
+    "appID": "Your-Alexa-Skill-ID"
+  },
+  "jenkinsAPI": {
+    "url": "http://jenkins.example.com:8080",
+    "username": "alexaops",
+    "apiToken": "8ebb23329c7a4575077462bd810030c16390dd7d"
+  },
+  "deployments": [
+    {
+      "type": "Jenkins",
+      "name": "wambo",
+      "jenkins": {
+        "jobName": "wambo-shop-deploy"
+      }
+    }
+  ]
+}
 ```
 
 ## Building AlexaOPS
@@ -103,6 +147,11 @@ Google Authenticator based authorization checking so not everybody in the room c
 
 > Alex: OK `<Andy>` I will now start ...`
 
+**TLS Support**
+
+AlexaOPS currently does not do TLS. Maybe I will add support for that later.
+For now you will have to put a SSL proxy in front of it.
+
 ## License
 
 「 AlexaOPS 」is licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for the full license text.
@@ -115,3 +164,4 @@ Google Authenticator based authorization checking so not everybody in the room c
 - `github.com/bouk/staticfiles` for compiling static files into the alexaops binary
 - `github.com/alecthomas/kingpin` for the command-line interface
 - `github.com/gorilla/mux` for HTTP request handling
+- `github.com/yosida95/golang-jenkins` for communication with Jenkins
