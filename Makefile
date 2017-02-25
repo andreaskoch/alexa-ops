@@ -15,4 +15,4 @@ crosscompile:
 
 docker:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bin/alexaops
-	docker build .
+	docker build -t andreaskoch/alexa-ops:latest .

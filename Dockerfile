@@ -1,9 +1,14 @@
 FROM alpine:latest
 MAINTAINER andy@ak7.io
 
+RUN mkdir /var/alexaops
+WORKDIR /var/alexaops
+
 ADD bin/alexaops /bin/alexaops
-ADD alexaops.conf.sample /etc/alexaops.conf
+ADD alexaops.conf.sample /var/alexaops/alexaops.conf
+
+VOLUME /var/alexaops
 
 EXPOSE 80
 
-CMD ["/bin/alexaops", "listen", "--address", ":80", "--config", "/etc/alexaops.conf"]
+ENTRYPOINT ["/bin/alexaops"]

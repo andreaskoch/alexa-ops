@@ -99,6 +99,19 @@ A structure of the config file looks like this (see: [alexaops.conf.sample](alex
 }
 ```
 
+**Running AlexaOPS with Docker**
+
+There is a small binary-only docker image with AlexaOPS available at Docker Hub:
+
+[andreaskoch/alexa-ops](https://hub.docker.com/r/andreaskoch/alexa-ops/)
+
+```bash
+docker run --rm \
+       -p 8080:80 \
+       andreaskoch/alexa-ops:latest \
+       listen
+```
+
 ## Building AlexaOPS
 
 **Build**
