@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/andreaskoch/golang-jenkins"
 	"net/url"
+	"log"
 )
 
 const DEPLOYMENT_STARTED = "deployment_of_%s_started"
@@ -54,6 +55,8 @@ func (deployment *deploymentIntendHandler) Handle(request ServiceRequest) (Servi
 	applicationName := request.RequestBody.Intent.Slots.ApplicationName.Value;
 	deploymentError := deployment.handler.Deploy(applicationName)
 	if deploymentError != nil {
+		log.Println("Error", deploymentError.Error())
+		
 		localizationDeploymentFailed, localizationError := deployment.localizer.Localize(DEPLOYMENT_FAILED, culture, applicationName)
 		if localizationError != nil {
 			return ServiceResponse{}, fmt.Errorf("Localization failed: %s", localizationError.Error())
