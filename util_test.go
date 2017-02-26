@@ -33,29 +33,29 @@ func Test_getMatchingDeploymentConfig(t *testing.T) {
 		{"ak 7 io", "ak7.io"},
 	}
 
-	deployments := []DeploymentConfig{
-		DeploymentConfig{
+	deployments := []Project{
+		Project{
 			Name: "andykdocs",
 		},
-		DeploymentConfig{
+		Project{
 			Name: "la di da will not match",
 		},
-		DeploymentConfig{
+		Project{
 			Name: "ak7.io",
 		},
 	}
 
 	for _, input := range inputs {
-		deploymentConfig, err := getMatchingDeploymentConfig(input.input, deployments)
+		deploymentConfig, err := getMatchingProject(input.input, deployments)
 
 		if err != nil {
 			t.Fail()
-			t.Logf("getMatchingDeploymentConfig(%q, ...) returned an error: %s", err.Error())
+			t.Logf("getMatchingProject(%q, ...) returned an error: %s", err.Error())
 		}
 
 		if deploymentConfig.Name != input.expectedResult {
 			t.Fail()
-			t.Logf("getMatchingDeploymentConfig(%q, ...) returned %q instead of %q", deploymentConfig.Name, input.expectedResult)
+			t.Logf("getMatchingProject(%q, ...) returned %q instead of %q", deploymentConfig.Name, input.expectedResult)
 		}
 	}
 }

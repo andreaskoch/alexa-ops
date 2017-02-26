@@ -2,39 +2,21 @@ package main
 
 import (
 	"fmt"
-	"github.com/andreaskoch/golang-jenkins"
-	"net/url"
 	"log"
+	"os"
+	"path/filepath"
+	"github.com/satori/go.uuid"
+	"os/exec"
 )
 
 const DEPLOYMENT_STARTED = "deployment_of_%s_started"
 const DEPLOYMENT_FAILED = "deployment_of_%s_failed"
 
-func getJenkinsJobs() error {
-	auth := &gojenkins.Auth{
-		Username: "alexaops",
-		ApiToken: "0395e8ffce4a42ec8912265ec70bffbe",
-	}
-	jenkins := gojenkins.NewJenkins(auth, "http://jenkins.002.io:50080")
-	jobs, err := jenkins.GetJobs()
-	if err != nil {
-		return err
-	}
-
-	for _, job := range jobs {
-		fmt.Println()
-		fmt.Println(job.Name)
-		fmt.Println(job.LastCompletedBuild.ChangeSet.Kind)
-	}
-
-	return nil
-}
-
 func newDeploymentIntendHandler(config Config) intendHandler {
 	return &deploymentIntendHandler{
 		config:    config,
 		localizer: getDeploymentHandlerLocalizations(),
-		handler:   &jenkinsDeploymentHandler{*config.JenkinsAPI, config.Deployments},
+		handler:   &bashDeploymentHandler{config.Parameters, config.Projects},
 	}
 }
 
@@ -56,7 +38,7 @@ func (deployment *deploymentIntendHandler) Handle(request ServiceRequest) (Servi
 	deploymentError := deployment.handler.Deploy(applicationName)
 	if deploymentError != nil {
 		log.Println("Error", deploymentError.Error())
-		
+
 		localizationDeploymentFailed, localizationError := deployment.localizer.Localize(DEPLOYMENT_FAILED, culture, applicationName)
 		if localizationError != nil {
 			return ServiceResponse{}, fmt.Errorf("Localization failed: %s", localizationError.Error())
@@ -94,31 +76,46 @@ type deploymentHandler interface {
 	Deploy(projectName string) error
 }
 
-type jenkinsDeploymentHandler struct {
-	jenkinsConfig     JenkinsAPI
-	deploymentConfigs []DeploymentConfig
+type bashDeploymentHandler struct {
+	parameters map[string]string
+	projects   []Project
 }
 
-func (deploymentHandler *jenkinsDeploymentHandler) Deploy(projectName string) error {
-	deploymentConfig, err := getMatchingDeploymentConfig(projectName, deploymentHandler.deploymentConfigs)
+func (deploymentHandler *bashDeploymentHandler) Deploy(projectName string) error {
+	project, projectErr := getMatchingProject(projectName, deploymentHandler.projects)
+	if projectErr != nil {
+		return projectErr
+	}
+
+	scriptDirectory := os.TempDir()
+	scriptPath := filepath.Join(scriptDirectory, fmt.Sprintf("%s.sh", uuid.NewV4().String()))
+	scriptFile, err := os.Create(scriptPath)
 	if err != nil {
 		return err
 	}
 
-	auth := &gojenkins.Auth{
-		Username: deploymentHandler.jenkinsConfig.Username,
-		ApiToken: deploymentHandler.jenkinsConfig.APIToken,
-	}
-	jenkins := gojenkins.NewJenkins(auth, deploymentHandler.jenkinsConfig.URL)
-	job, jobError := jenkins.GetJob(deploymentConfig.Jenkins.JobName)
-	if jobError != nil {
-		return jobError
-	}
+	defer func() {
+		scriptFile.Close()
+		os.Remove(scriptPath)
+	}()
 
-	buildResult := jenkins.Build(job, url.Values{})
-	if buildResult != nil {
-		return buildResult
+	scriptFile.WriteString(project.DeploymentIntend.Deploy.Code)
+
+	deploymentCommand := exec.Command("/bin/bash", scriptPath)
+	deploymentCommand = addEnvironmentVariables(deploymentCommand, deploymentHandler.parameters)
+	deploymentCommand = addEnvironmentVariables(deploymentCommand, project.Parameters)
+
+	if err := deploymentCommand.Run(); err != nil {
+		return err
 	}
 
 	return nil
+}
+
+func addEnvironmentVariables(command *exec.Cmd, environmentVariables map[string]string) *exec.Cmd {
+	for key, value := range environmentVariables {
+		command.Env = append(command.Env, fmt.Sprintf("%s=%s", key, value))
+	}
+
+	return command
 }

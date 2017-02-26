@@ -177,4 +177,4 @@ For now you will have to put a SSL proxy in front of it.
 - `github.com/bouk/staticfiles` for compiling static files into the alexaops binary
 - `github.com/alecthomas/kingpin` for the command-line interface
 - `github.com/gorilla/mux` for HTTP request handling
-- `github.com/yosida95/golang-jenkins` for communication with Jenkins
+- `github.com/satori/go.uuid/uuid.` for UUID generation

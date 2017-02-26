@@ -1,5 +1,7 @@
-FROM alpine:latest
+FROM ubuntu:latest
 MAINTAINER andy@ak7.io
+
+RUN apt-get update && apt-get install -qy ca-certificates curl
 
 RUN mkdir /var/alexaops
 WORKDIR /var/alexaops

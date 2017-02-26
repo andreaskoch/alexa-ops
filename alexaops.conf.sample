@@ -2,17 +2,37 @@
   "skill": {
     "appID": "Your-Alexa-Skill-ID"
   },
-  "jenkinsAPI": {
-    "url": "http://jenkins.example.com:8080",
-    "username": "alexaops",
-    "apiToken": "8ebb23329c7a4575077462bd810030c16390dd7d"
+  "parameters": {
+    "PROJECT_NAME": "SomeValue"
   },
-  "deployments": [
+  "projects": [
     {
-      "type": "Jenkins",
-      "name": "wambo",
-      "jenkins": {
-        "jobName": "wambo-shop-deploy"
+      "name": "ak7.io",
+      "parameters": {
+        "APPLICATION_NAME": "SomeOtherValue"
+      },
+      "deploymentIntend": {
+        "deploy": {
+          "code": "curl https://ak7.io/deploy/$PROJECT_NAME/$APPLICATION_NAME"
+        }
+      },
+      "restartIntend": {
+        "restart": {
+          "code": "curl https://ak7.io/restart/$PROJECT_NAME/$APPLICATION_NAME"
+        }
+      },
+      "versionIntend": {
+        "getCurrentVersion": {
+          "code": "curl https://ak7.io/version/$PROJECT_NAME/$APPLICATION_NAME"
+        },
+        "getAvailableVersion": {
+          "code": ""
+        }
+      },
+      "statusIntend": {
+        "getStatus": {
+          "code": "curl https://ak7.io/status/$PROJECT_NAME/$APPLICATION_NAME"
+        }
       }
     }
   ]

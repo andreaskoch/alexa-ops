@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func getMatchingDeploymentConfig(projectName string, deploymentConfigs []DeploymentConfig) (DeploymentConfig, error) {
+func getMatchingProject(projectName string, deploymentConfigs []Project) (Project, error) {
 	for _, deploymentConfig := range deploymentConfigs {
 
 		if normalizeProjectName(deploymentConfig.Name) == normalizeProjectName(projectName) {
@@ -14,7 +14,7 @@ func getMatchingDeploymentConfig(projectName string, deploymentConfigs []Deploym
 		}
 	}
 
-	return DeploymentConfig{}, fmt.Errorf("No matching deployment config found for %q", projectName)
+	return Project{}, fmt.Errorf("No matching project found for %q", projectName)
 }
 
 var whitespace = regexp.MustCompile(`[\s\.]`)

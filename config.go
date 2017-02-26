@@ -10,8 +10,8 @@ import (
 type Config struct {
 	Skill AlexaSkill `json:"skill"`
 
-	JenkinsAPI  *JenkinsAPI `json:"jenkinsAPI,omitempty"`
-	Deployments []DeploymentConfig `json:"deployments"`
+	Parameters map[string]string `json:"parameters"`
+	Projects   []Project `json:"projects"`
 }
 
 type AlexaSkill struct {
@@ -21,20 +21,36 @@ type AlexaSkill struct {
 	AppID string `json:"appID"`
 }
 
-type JenkinsAPI struct {
-	URL      string `json:"url"`
-	Username string `json:"username"`
-	APIToken string `json:"apiToken"`
-}
-type DeploymentConfig struct {
-	Type string `json:"type"`
+type Project struct {
 	Name string `json:"name"`
 
-	Jenkins *JenkinsDeployment `json:"jenkins,omitempty"`
+	Parameters map[string]string `json:"parameters"`
+
+	DeploymentIntend DeploymentIntendConfig `json:"deploymentIntend"`
+	RestartIntend    RestartIntendConfig `json:"restartIntend"`
+	VersionIntend    VersionIntendConfig `json:"versionIntend"`
+	StatusIntend     StatusIntendConfig `json:"statusIntend"`
 }
 
-type JenkinsDeployment struct {
-	JobName string `json:"jobName"`
+type BashCode struct {
+	Code string `json:"code"`
+}
+
+type DeploymentIntendConfig struct {
+	Deploy BashCode `json:"deploy"`
+}
+
+type RestartIntendConfig struct {
+	Restart BashCode `json:"restart"`
+}
+
+type VersionIntendConfig struct {
+	GetCurrentVersion   BashCode `json:"getCurrentVersion"`
+	GetAvailableVersion BashCode `json:"getAvailableVersion"`
+}
+
+type StatusIntendConfig struct {
+	GetStatus BashCode `json:"getStatus"`
 }
 
 func readConfigFromFile(configPath string) (Config, error) {
@@ -88,17 +104,34 @@ func newSampleConfig() Config {
 		Skill: AlexaSkill{
 			AppID: "Your-Alexa-Skill-ID",
 		},
-		JenkinsAPI: &JenkinsAPI{
-			URL:      "http://jenkins.example.com:8080",
-			Username: "alexaops",
-			APIToken: "8ebb23329c7a4575077462bd810030c16390dd7d",
+		Parameters: map[string]string{
+			"PROJECT_NAME": "SomeValue",
 		},
-		Deployments: []DeploymentConfig{
-			DeploymentConfig{
-				Type: "Jenkins",
-				Name: "wambo",
-				Jenkins: &JenkinsDeployment{
-					JobName: "wambo-shop-deploy",
+		Projects: []Project{
+			Project{
+				Name: "ak7.io",
+				Parameters: map[string]string{
+					"APPLICATION_NAME": "SomeOtherValue",
+				},
+				DeploymentIntend: DeploymentIntendConfig{
+					Deploy: BashCode{
+						Code: "curl https://ak7.io/deploy/$PROJECT_NAME/$APPLICATION_NAME",
+					},
+				},
+				RestartIntend: RestartIntendConfig{
+					Restart: BashCode{
+						Code: "curl https://ak7.io/restart/$PROJECT_NAME/$APPLICATION_NAME",
+					},
+				},
+				VersionIntend: VersionIntendConfig{
+					GetCurrentVersion: BashCode{
+						Code: "curl https://ak7.io/version/$PROJECT_NAME/$APPLICATION_NAME",
+					},
+				},
+				StatusIntend: StatusIntendConfig{
+					GetStatus: BashCode{
+						Code: "curl https://ak7.io/status/$PROJECT_NAME/$APPLICATION_NAME",
+					},
 				},
 			},
 		},
