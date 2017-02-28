@@ -1,0 +1,20 @@
+{
+  "category": "Productivity",
+  "subCategory": "Organizers & Assistants",
+  "testingInstructions": "",
+  "countriesAndRegion": "all",
+  "skillShortDescription": "Lass deine DevOPS Aufgaben von deinem virtuellen DevOPS Team durchführen: Deployments, Anwendungen neu starten, Versionnummern und den Status prüfen",
+  "fullDescription": "AlexaOPS ist dein virtuelles 24/7 DevOPS Team das viele deiner täglichen OPS Tätigkeiten für dich übernehmen kann: Deployments, nach neuen Versionen ausschau halten, den Status von Anwendungen prüfen und Anwendungen neu starten.",
+  "examplePhrases": [
+    "Alexa, sag OPS es soll Anwendung A deployen",
+    "Alexa, sag OPS es soll Anwendung A neu starten",
+    "Alexa, frag OPS nach dem Status von Anwendung A"
+  ],
+  "keywords": [
+    "DevOPS",
+    "Operations",
+    "Server Betrieb",
+    "Deployment",
+    "Hosting"
+  ]
+}

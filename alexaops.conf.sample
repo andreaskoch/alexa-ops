@@ -1,0 +1,39 @@
+{
+  "skill": {
+    "appID": "Your-Alexa-Skill-ID"
+  },
+  "parameters": {
+    "PROJECT_NAME": "SomeValue"
+  },
+  "projects": [
+    {
+      "name": "ak7.io",
+      "parameters": {
+        "APPLICATION_NAME": "SomeOtherValue"
+      },
+      "deploymentIntend": {
+        "deploy": {
+          "code": "curl https://ak7.io/deploy/$PROJECT_NAME/$APPLICATION_NAME"
+        }
+      },
+      "restartIntend": {
+        "restart": {
+          "code": "curl https://ak7.io/restart/$PROJECT_NAME/$APPLICATION_NAME"
+        }
+      },
+      "versionIntend": {
+        "getCurrentVersion": {
+          "code": "curl https://ak7.io/version/$PROJECT_NAME/$APPLICATION_NAME"
+        },
+        "getAvailableVersion": {
+          "code": ""
+        }
+      },
+      "statusIntend": {
+        "getStatus": {
+          "code": "curl https://ak7.io/status/$PROJECT_NAME/$APPLICATION_NAME"
+        }
+      }
+    }
+  ]
+}

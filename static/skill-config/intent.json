@@ -1,0 +1,49 @@
+{
+  "intents": [
+    {
+      "intent": "Deployment",
+      "slots": [
+        {
+          "name": "ApplicationName",
+          "type": "application"
+        }
+      ]
+    },
+    {
+      "intent": "Restart",
+      "slots": [
+        {
+          "name": "ApplicationName",
+          "type": "application"
+        }
+      ]
+    },
+    {
+      "intent": "Status",
+      "slots": [
+        {
+          "name": "ApplicationName",
+          "type": "application"
+        }
+      ]
+    },
+    {
+      "intent": "CurrentVersion",
+      "slots": [
+        {
+          "name": "ApplicationName",
+          "type": "application"
+        }
+      ]
+    },
+    {
+      "intent": "AvailableVersion",
+      "slots": [
+        {
+          "name": "ApplicationName",
+          "type": "application"
+        }
+      ]
+    }
+  ]
+}
